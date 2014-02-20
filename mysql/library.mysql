@@ -1,0 +1,61 @@
+create database library;
+use library;
+
+create table User 
+(
+	userID INT AUTO_INCREMENT,  
+	username VARCHAR(20), 
+	password VARCHAR(20), 
+	firstname VARCHAR(20), 
+	surname VARCHAR(20), 
+	addressl1 VARCHAR(30),
+	addressl2 VARCHAR(30), 
+	city VARCHAR(20), 
+	telephone VARCHAR(15),  
+	mobile VARCHAR(15), 
+	PRIMARY KEY (userID)
+) ENGINE=InnoDB;
+
+create table Category 
+( 
+	categoryID INT AUTO_INCREMENT, 
+	categoryname VARCHAR(15),  
+	PRIMARY KEY (categoryID)
+) ENGINE=InnoDB;
+
+create table Book 
+(
+	bookID INT AUTO_INCREMENT, 
+	isbn VARCHAR(15), 
+	booktitle VARCHAR(30), 
+	author VARCHAR(30), 
+	edition VARCHAR(1), 
+	year VARCHAR(4),
+	category INT, 
+	FOREIGN KEY (category) 
+    REFERENCES Category(categoryID)
+    ON DELETE CASCADE, 
+	reserved VARCHAR(1), 
+	PRIMARY KEY (bookID)
+) ENGINE=InnoDB;
+
+create table ReservedBooks 
+( 
+	reservationID INT AUTO_INCREMENT,
+	book INT, 	
+	FOREIGN KEY (book) 
+    REFERENCES Book(bookID)
+    ON DELETE CASCADE,
+    user INT,  
+	FOREIGN KEY (user) 
+    REFERENCES User(userID)
+    ON DELETE CASCADE,
+    reservationdate DATE,
+	PRIMARY KEY (reservationID)
+) ENGINE=InnoDB;
+
+CREATE TRIGGER ReservedBooksOnInsert BEFORE INSERT ON `ReservedBooks`
+    FOR EACH ROW SET NEW.ReservationDate = IFNULL(NEW.reservationdate, CURDATE());
+
+
+
